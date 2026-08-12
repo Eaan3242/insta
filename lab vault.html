@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>2nd Life Lab · 실험 아카이브 20</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --slate:#1A2027; --deep:#12171D; --card:#212932;
+  --sage:#8FB0A9; --sage-dim:#5E8A82; --mist:#E4E7E3;
+  --amber:#D8A24A; --line:rgba(143,176,169,.20); --muted:#93A0A6;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'Noto Sans KR',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--deep);
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:34px 34px; background-attachment:fixed;
+  color:var(--mist); word-break:keep-all; line-height:1.65;
+  min-height:100dvh;
+  padding:calc(env(safe-area-inset-top) + 22px) calc(env(safe-area-inset-right) + 16px)
+          calc(env(safe-area-inset-bottom) + 60px) calc(env(safe-area-inset-left) + 16px);
+}
+.wrap{max-width:740px;margin:0 auto;}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.26em;
+  color:var(--sage);text-transform:uppercase;margin-bottom:14px;}
+h1{font-size:29px;font-weight:900;margin:0 0 10px;letter-spacing:-.025em;line-height:1.3;}
+h1 em{font-style:normal;color:var(--sage);}
+.lede{color:var(--muted);font-size:14px;margin:0 0 22px;}
+.stats{display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;}
+.stat{flex:1;min-width:100px;background:var(--card);border:1px solid var(--line);
+  border-radius:12px;padding:13px 14px;}
+.stat b{display:block;font-family:'IBM Plex Mono',monospace;font-size:20px;color:var(--mist);}
+.stat span{font-size:11.5px;color:var(--muted);}
+
+.tools{position:sticky;top:0;z-index:5;background:var(--deep);
+  padding:10px 0 12px;margin-bottom:6px;}
+#q{width:100%;background:var(--card);color:var(--mist);border:1px solid var(--line);
+  border-radius:11px;padding:14px 15px;font-size:16px;font-family:inherit;
+  outline:none;min-height:52px;}
+#q:focus{border-color:var(--sage);}
+.chips{display:flex;gap:7px;margin-top:10px;overflow-x:auto;padding-bottom:2px;}
+.chip{white-space:nowrap;background:transparent;color:var(--muted);cursor:pointer;
+  border:1px solid var(--line);border-radius:20px;padding:8px 14px;font-size:13px;
+  font-family:inherit;min-height:38px;}
+.chip.on{background:var(--sage);color:var(--deep);border-color:var(--sage);font-weight:700;}
+
+.exp{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  margin-bottom:14px;overflow:hidden;}
+.exp-head{display:flex;gap:13px;align-items:flex-start;padding:17px;cursor:pointer;}
+.no{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--amber);
+  letter-spacing:.1em;flex:0 0 auto;padding-top:3px;}
+.exp-t{flex:1;font-weight:700;font-size:16px;line-height:1.5;}
+.arrow{color:var(--sage);flex:0 0 auto;transition:transform .2s;padding-top:2px;}
+@media (prefers-reduced-motion:reduce){.arrow{transition:none;}}
+.exp.open .arrow{transform:rotate(90deg);}
+.exp-body{display:none;border-top:1px solid var(--line);padding:4px 17px 17px;}
+.exp.open .exp-body{display:block;}
+
+.sec{margin-top:17px;}
+.sec-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:9px;}
+.sec-t{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;
+  color:var(--sage);text-transform:uppercase;}
+.cp{background:transparent;color:var(--sage);border:1px solid var(--line);
+  border-radius:8px;padding:7px 12px;font-size:12px;font-family:inherit;
+  cursor:pointer;min-height:34px;}
+.box{background:var(--deep);border-radius:10px;padding:13px 14px;font-size:14.5px;
+  white-space:pre-wrap;}
+.hook{font-size:18px;font-weight:900;line-height:1.45;}
+.scene{border-left:2px solid var(--sage-dim);padding-left:13px;margin-bottom:14px;}
+.scene:last-child{margin-bottom:0;}
+.scene .m{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--amber);
+  letter-spacing:.1em;margin-bottom:4px;}
+.scene .v{font-size:13px;color:var(--muted);margin-bottom:5px;}
+.scene .s{font-size:14.5px;font-weight:500;}
+.tag{display:inline-block;background:var(--deep);border:1px solid var(--line);
+  border-radius:18px;padding:4px 11px;margin:0 5px 6px 0;font-size:12.5px;color:var(--sage);}
+.fill{color:var(--amber);font-weight:600;}
+.empty{text-align:center;padding:50px 20px;color:var(--muted);}
+.note{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);
+  margin-top:28px;padding-top:16px;}
+.toast{position:fixed;left:50%;bottom:34px;transform:translateX(-50%);
+  background:var(--sage);color:var(--deep);font-weight:700;font-size:14px;
+  padding:11px 20px;border-radius:22px;opacity:0;pointer-events:none;
+  transition:opacity .2s;z-index:20;}
+.toast.on{opacity:1;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="eyebrow">2nd Life Lab</div>
+<h1>스무 번의 실험,<br><em>스무 개의 기록</em></h1>
+<p class="lede">검색하고 복사해서 바로 올리는 실험 시리즈 금고. 릴스 대본 · 캡션 · 해시태그 · 고정댓글 · 쓰레드까지 한 편에 전부.</p>
+
+<div class="stats">
+  <div class="stat"><b>20</b><span>실험 편수</span></div>
+  <div class="stat"><b>3</b><span>단계 구성</span></div>
+  <div class="stat"><b>월·목</b><span>발행 리듬</span></div>
+</div>
+
+<div class="tools">
+  <input id="q" type="search" placeholder="주제·키워드로 찾기 (예: 비용, 외로움)" autocomplete="off"/>
+  <div class="chips">
+    <button class="chip on" data-s="all">전체</button>
+    <button class="chip" data-s="1">01–07 공감</button>
+    <button class="chip" data-s="2">08–14 실행</button>
+    <button class="chip" data-s="3">15–20 커뮤니티</button>
+  </div>
+</div>
+
+<div id="list"></div>
+
+<div class="note">
+<span class="fill">○○</span> 로 표시된 곳은 이안이 직접 겪은 숫자로 채워 넣으세요. 지어낸 숫자를 그대로 올리면 나중에 신뢰가 무너집니다.<br><br>
+공개 게시물에는 수익 · 모집 · 플랫폼 브랜드명을 넣지 않습니다. 20편까지는 링크와 CTA 없이 저장과 공감만 유도하세요.
+</div>
+
+</div>
+<div class="toast" id="toast">복사 완료</div>
+
+<script>
+var DATA = [
+{n:1,s:1,t:"혼자 밥 먹기, 며칠이면 익숙해질까",
+hook:"혼자 밥 먹기,\n며칠이면 익숙해질까",
+sc:[["0–3초","빈 식탁에 놓인 1인분 그릇 (손만 등장)","혼자 밥 먹는 게 어색했다"],
+["3–8초","식당 창밖 풍경, 천천히 패닝","처음엔 휴대폰만 봤다"],
+["8–14초","숟가락이 그릇에 닿는 클로즈업","○○일째, 폰을 내려놨다"],
+["14–20초","깨끗이 비운 그릇, 로고","적응하는 데 걸린 시간 ○○일 · 다음 실험에서 만나요"]],
+cap:"실험 01. 혼자 밥 먹기\n\n어색했던 건 밥이 아니라 시선이었습니다.\n○○일이 지나자 그 시선이 사라졌어요.\n\n혼자 먹는 게 아직 어색하다면, 그건 당신이 이상해서가 아니라 아직 ○○일이 안 지나서입니다.\n\n다음 실험에서 만나요",
+tags:["#인생2막","#혼자밥먹기","#중년의일상","#실험기록"],
+pin:"저는 ○○일 걸렸습니다. 여러분은 며칠 걸리셨나요?",
+th:"혼자 밥 먹는 게 어색한 건 밥 때문이 아니었다.\n주변 시선 때문이었다.\n\n그런데 ○○일쯤 지나니 알게 됐다. 아무도 나를 보고 있지 않았다는 걸."},
+
+{n:2,s:1,t:"한 달 살기 비용, 실제로 얼마 들었나",
+hook:"한 달 살기,\n실제로 얼마 들었나",
+sc:[["0–3초","가계부 앱 화면 (개인정보 가림)","한 달 살기, 진짜 비용을 적어봤다"],
+["3–9초","숙소 창밖, 장바구니, 영수증 순서","숙소 ○○만원 · 식비 ○○만원"],
+["9–15초","계산기 화면 클로즈업","교통 ○○만원 · 기타 ○○만원"],
+["15–22초","합계 숫자 화면, 로고","총 ○○만원 · 다음 실험에서 만나요"]],
+cap:"실험 02. 한 달 살기 비용\n\n예상은 ○○만원, 실제는 ○○만원이었습니다.\n가장 많이 나간 건 숙소가 아니라 ○○이었어요.\n\n막연히 '비쌀 것 같아서' 미루고 있다면, 한 번 적어보세요. 생각보다 계산이 됩니다.\n\n다음 실험에서 만나요",
+tags:["#한달살기","#인생2막","#여행경비","#실험기록"],
+pin:"항목별 내역은 다음 실험에서 더 자세히 풀어볼게요.",
+th:"한 달 살기 비용을 실제로 적어봤다.\n\n예상 ○○만원 → 실제 ○○만원.\n\n막연한 두려움의 대부분은 계산해보면 사라진다."},
+
+{n:3,s:1,t:"주말 이틀을 온전히 나에게 쓰면",
+hook:"주말 이틀을\n온전히 나에게 썼다",
+sc:[["0–3초","비어 있는 주말 캘린더 화면","약속을 전부 비웠다"],
+["3–9초","아침 햇빛, 커피, 책 (손만)","누구도 만나지 않은 이틀"],
+["9–15초","산책하는 발끝, 저녁 하늘","불안했던 건 처음 ○○시간뿐이었다"],
+["15–21초","조용한 방, 로고","되찾은 시간 ○○시간 · 다음 실험에서 만나요"]],
+cap:"실험 03. 나를 위한 주말\n\n이틀 동안 아무 약속도 잡지 않았습니다.\n처음 ○○시간은 불안했고, 그 뒤로는 편했어요.\n\n비워두는 연습도 연습이 필요하더군요.\n\n다음 실험에서 만나요",
+tags:["#인생2막","#혼자만의시간","#중년","#실험기록"],
+pin:"이번 주말, 하루만 비워보시겠어요?",
+th:"주말 이틀을 온전히 나에게 써봤다.\n\n불안했던 건 처음 ○○시간.\n그 뒤로는 이상하리만치 편했다."},
+
+{n:4,s:1,t:"혼자 여행 가면 정말 외로울까",
+hook:"혼자 여행,\n정말 외로울까",
+sc:[["0–3초","혼자 끄는 캐리어 바퀴 클로즈업","가장 많이 들은 말: 안 외로워요?"],
+["3–9초","공항 창, 기차 창밖 흐르는 풍경","외로웠던 순간은 있었다"],
+["9–15초","혼자 앉은 벤치, 낯선 사람들의 발걸음","하루 중 ○○분 정도"],
+["15–22초","해질녘 풍경, 로고","나머지 시간은 온전히 내 것 · 다음 실험에서 만나요"]],
+cap:"실험 04. 혼자 여행의 외로움\n\n외롭지 않다고 하면 거짓말입니다.\n하루 중 ○○분 정도는 분명 외로웠어요.\n\n그런데 나머지 시간이 전부 제 것이었습니다.\n그 거래, 저는 남는 장사라고 생각했어요.\n\n다음 실험에서 만나요",
+tags:["#혼자여행","#인생2막","#중년여행","#실험기록"],
+pin:"혼자 여행 중 가장 외로웠던 순간, 언제셨나요?",
+th:"혼자 여행이 외롭냐고 묻는다면, 외롭다.\n\n하루 ○○분 정도.\n\n나머지 스물세 시간은 온전히 내 것이었다."},
+
+{n:5,s:1,t:"짐을 절반으로 줄여봤다",
+hook:"짐을 절반으로\n줄여봤다",
+sc:[["0–3초","펼쳐진 캐리어, 가득 찬 짐","가져간 것의 절반은 안 썼다"],
+["3–9초","옷을 하나씩 빼는 손","○○벌 → ○○벌"],
+["9–15초","가벼워진 캐리어를 드는 손","무게 ○○kg → ○○kg"],
+["15–21초","가볍게 걷는 발걸음, 로고","줄인 만큼 편해졌다 · 다음 실험에서 만나요"]],
+cap:"실험 05. 짐 줄이기\n\n○○kg에서 ○○kg으로 줄였습니다.\n불편했던 건 딱 ○○가지뿐이었어요.\n\n짐만 그런 게 아니더군요. 인생에서도 대부분은 없어도 됩니다.\n\n다음 실험에서 만나요",
+tags:["#미니멀","#짐싸기","#인생2막","#실험기록"],
+pin:"끝까지 못 버린 물건, 다들 뭐가 있으신가요?",
+th:"짐을 절반으로 줄였다.\n\n불편했던 건 ○○가지뿐.\n\n짐만 그런 게 아니었다."},
+
+{n:6,s:1,t:"아침 루틴 하나 바꿔봤다",
+hook:"아침 루틴 하나,\n○○일 바꿔봤다",
+sc:[["0–3초","어두운 방, 켜지는 스탠드","딱 하나만 바꿨다"],
+["3–9초","창문 여는 손, 물 한 잔","○○시 기상 · 물 한 잔"],
+["9–15초","노트에 적는 손 (글씨 안 보이게)","하루 세 줄 기록"],
+["15–21초","아침 햇살 든 방, 로고","○○일째 유지 중 · 다음 실험에서 만나요"]],
+cap:"실험 06. 아침 루틴\n\n거창한 계획은 전부 실패했습니다.\n딱 하나만 바꾸니 ○○일째 유지되고 있어요.\n\n바꾼 건 ○○ 하나뿐입니다.\n\n다음 실험에서 만나요",
+tags:["#아침루틴","#인생2막","#중년","#실험기록"],
+pin:"딱 하나만 바꾼다면, 뭘 바꾸시겠어요?",
+th:"거창한 아침 루틴은 전부 실패했다.\n\n하나만 바꾸니 ○○일째 가고 있다.\n\n작게 시작하는 게 결국 오래 간다."},
+
+{n:7,s:1,t:"한 달간 아무 약속도 잡지 않았다",
+hook:"한 달간\n약속을 잡지 않았다",
+sc:[["0–3초","텅 빈 한 달치 캘린더","한 달을 통째로 비웠다"],
+["3–9초","울리지 않는 휴대폰, 조용한 방","연락이 줄어드는 데 ○○일"],
+["9–15초","책상 앞, 창밖 시간의 흐름","진짜 남은 사람은 ○○명"],
+["15–22초","다시 채워지는 캘린더, 로고","비워야 보이는 것 · 다음 실험에서 만나요"]],
+cap:"실험 07. 약속 없는 한 달\n\n한 달간 먼저 연락하지 않았습니다.\n○○일이 지나자 조용해졌고, 끝까지 남은 사람은 ○○명이었어요.\n\n서운하지 않았습니다. 오히려 정리가 됐어요.\n\n다음 실험에서 만나요",
+tags:["#인간관계","#인생2막","#중년","#실험기록"],
+pin:"관계를 정리해보신 적 있으신가요?",
+th:"한 달간 먼저 연락하지 않았다.\n\n남은 사람은 ○○명.\n\n서운하지 않았다. 정리가 됐을 뿐이다."},
+
+{n:8,s:2,t:"혼자 여행, 1인 요금은 얼마나 더 비쌀까",
+hook:"혼자면\n얼마나 더 비쌀까",
+sc:[["0–3초","예약 화면 스크롤 (개인정보 가림)","혼자 가면 손해라던데"],
+["3–9초","가격 비교 화면 캡처","2인 기준 ○○만원"],
+["9–15초","계산기, 숫자 비교","1인 기준 ○○만원"],
+["15–22초","창밖 풍경, 로고","차액 ○○만원 · 다음 실험에서 만나요"]],
+cap:"실험 08. 1인 추가 요금\n\n혼자 가면 얼마나 더 드는지 실제로 계산해봤습니다.\n차액은 ○○만원이었어요.\n\n생각보다 크지 않은 경우도, 생각보다 큰 경우도 있었습니다. 조건은 댓글에 정리해둘게요.\n\n다음 실험에서 만나요",
+tags:["#혼자여행","#여행경비","#인생2막","#실험기록"],
+pin:"조건에 따라 차액이 달라집니다. 기준은 ○○였어요.",
+th:"혼자 여행하면 얼마나 더 비쌀까.\n\n실제로 계산해보니 차액 ○○만원.\n\n막연히 포기하기 전에 한 번 계산해볼 값이다."},
+
+{n:9,s:2,t:"항공권, 언제 사야 제일 싼가",
+hook:"항공권,\n언제 사야 싼가",
+sc:[["0–3초","달력에 표시된 날짜들","○○주 동안 가격을 기록했다"],
+["3–9초","가격 그래프 손그림","같은 노선, 매일 확인"],
+["9–15초","가장 낮은 지점 표시","최저가는 출발 ○○일 전"],
+["15–22초","비행기 창밖, 로고","차이 ○○만원 · 다음 실험에서 만나요"]],
+cap:"실험 09. 항공권 타이밍\n\n같은 노선을 ○○주간 매일 기록했습니다.\n가장 쌌던 시점은 출발 ○○일 전이었어요.\n\n최고가와 최저가 차이는 ○○만원. 노선마다 다르니 직접 기록해보시길 권합니다.\n\n다음 실험에서 만나요",
+tags:["#항공권","#여행팁","#인생2막","#실험기록"],
+pin:"어떤 노선이 궁금하신가요?",
+th:"항공권을 ○○주간 매일 기록해봤다.\n\n최저가는 출발 ○○일 전.\n최고가와 차이는 ○○만원.\n\n기록하면 보인다."},
+
+{n:10,s:2,t:"해외에서 일하며 살기, 하루 일과",
+hook:"해외에서 일하는\n하루를 공개합니다",
+sc:[["0–3초","창밖이 밝아오는 방","○○시 기상"],
+["3–9초","노트북 화면(내용 가림), 커피","오전 ○○시간 집중"],
+["9–15초","점심, 짧은 산책","오후는 이동과 정리"],
+["15–22초","저녁 창밖 불빛, 로고","실제 일한 시간 ○○시간 · 다음 실험에서 만나요"]],
+cap:"실험 10. 하루 일과\n\n여행하며 일한다고 하면 놀기만 하는 줄 아십니다.\n실제로 일한 시간은 하루 ○○시간이었어요.\n\n자유로운 건 시간의 양이 아니라 순서를 제가 정한다는 점이었습니다.\n\n다음 실험에서 만나요",
+tags:["#일하며여행","#인생2막","#하루루틴","#실험기록"],
+pin:"가장 궁금한 시간대가 있으신가요?",
+th:"여행하며 일한다고 하면 놀기만 하는 줄 안다.\n\n실제 일한 시간 하루 ○○시간.\n\n다른 건 양이 아니라 순서를 내가 정한다는 것."},
+
+{n:11,s:2,t:"영어 못해도 되는지 확인해봤다",
+hook:"영어 못해도\n되는지 확인해봤다",
+sc:[["0–3초","번역 앱 화면","영어 때문에 못 간다는 말"],
+["3–9초","메뉴판, 표지판 (손으로 가리키며)","○○일 동안 세어봤다"],
+["9–15초","번역 앱 사용 장면","영어가 꼭 필요했던 순간 ○○번"],
+["15–22초","걷는 발걸음, 로고","나머지는 손짓으로 됐다 · 다음 실험에서 만나요"]],
+cap:"실험 11. 영어 장벽\n\n○○일 동안 영어가 꼭 필요했던 순간을 세어봤습니다. ○○번이었어요.\n\n나머지는 번역 앱과 손짓으로 해결됐습니다.\n영어는 조건이 아니라 편의였습니다.\n\n다음 실험에서 만나요",
+tags:["#해외여행","#영어","#인생2막","#실험기록"],
+pin:"가장 곤란했던 순간은 ○○이었습니다.",
+th:"영어가 꼭 필요했던 순간을 세어봤다.\n\n○○일 동안 ○○번.\n\n영어는 조건이 아니라 편의였다."},
+
+{n:12,s:2,t:"여권 하나로 갈 수 있는 나라를 세어봤다",
+hook:"여권 하나로\n갈 수 있는 나라",
+sc:[["0–3초","여권 표지 클로즈업 (내부 안 보이게)","서랍에 있던 여권을 꺼냈다"],
+["3–9초","세계지도에 표시하는 손","무비자로 갈 수 있는 나라"],
+["9–15초","지도 위 표시된 국가들","○○개국"],
+["15–21초","지도 전체, 로고","가본 곳은 ○○개국 · 다음 실험에서 만나요"]],
+cap:"실험 12. 여권의 범위\n\n무비자로 갈 수 있는 나라를 세어봤습니다. ○○개국이었어요.\n그중 제가 가본 곳은 ○○개국.\n\n갈 수 있는데 안 간 나라가 이렇게 많았습니다.\n\n다음 실험에서 만나요",
+tags:["#여권","#해외여행","#인생2막","#실험기록"],
+pin:"가장 가보고 싶은 나라는 어디신가요?",
+th:"여권 하나로 갈 수 있는 나라를 세어봤다.\n\n○○개국.\n가본 곳은 ○○개국.\n\n못 가는 게 아니라 안 간 것이었다."},
+
+{n:13,s:2,t:"3개월 예산 짜고 실제로 지켜봤다",
+hook:"3개월 예산,\n지켜졌을까",
+sc:[["0–3초","노트에 적는 예산 (숫자 흐리게)","3개월 예산을 짰다"],
+["3–9초","가계부 앱, 영수증들","계획 ○○만원"],
+["9–15초","달력 넘어가는 장면","실제 ○○만원"],
+["15–22초","계산기 결과, 로고","오차 ○○% · 다음 실험에서 만나요"]],
+cap:"실험 13. 예산 지키기\n\n계획은 ○○만원, 실제는 ○○만원이었습니다.\n오차는 ○○%.\n\n예산이 무너진 항목은 ○○이었어요. 다음엔 그 항목만 두 배로 잡아두려 합니다.\n\n다음 실험에서 만나요",
+tags:["#예산관리","#인생2막","#여행경비","#실험기록"],
+pin:"예산이 가장 잘 무너지는 항목, 뭐가 있으신가요?",
+th:"3개월 예산을 짜고 지켜봤다.\n\n계획 ○○만원 → 실제 ○○만원.\n오차 ○○%.\n\n무너진 건 늘 같은 항목이었다."},
+
+{n:14,s:2,t:"혼자 여행 중 가장 곤란했던 순간",
+hook:"혼자 여행,\n가장 곤란했던 순간",
+sc:[["0–3초","낯선 밤거리","혼자라서 곤란했던 순간이 있었다"],
+["3–9초","닫힌 문, 빈 정류장","○○ 상황"],
+["9–15초","휴대폰 지도 화면","해결하는 데 걸린 시간 ○○분"],
+["15–22초","다시 걷는 발걸음, 로고","혼자여도 해결됐다 · 다음 실험에서 만나요"]],
+cap:"실험 14. 곤란했던 순간\n\n혼자라서 정말 곤란했던 순간이 있었습니다.\n○○ 상황이었고, 해결하는 데 ○○분이 걸렸어요.\n\n무서웠던 건 상황이 아니라 '혼자'라는 생각이었습니다.\n\n다음 실험에서 만나요",
+tags:["#혼자여행","#여행팁","#인생2막","#실험기록"],
+pin:"비슷한 상황 겪어보신 분 계신가요?",
+th:"혼자 여행 중 가장 곤란했던 순간.\n\n해결하는 데 ○○분.\n\n무서웠던 건 상황이 아니라 혼자라는 생각이었다."},
+
+{n:15,s:3,t:"나 같은 사람이 몇 명이나 될까",
+hook:"나 같은 사람,\n몇 명이나 될까",
+sc:[["0–3초","창밖을 보는 뒷모습 실루엣","혼자인 줄 알았다"],
+["3–9초","통계 화면 손그림","○○년 기준 ○○만 명"],
+["9–15초","숫자 확대","혼자 사는 50대"],
+["15–21초","여러 창문의 불빛, 로고","혼자가 아니었다 · 다음 실험에서 만나요"]],
+cap:"실험 15. 혼자인 사람들\n\n찾아보니 저 같은 사람이 ○○만 명이었습니다.\n\n혼자라고 느끼는 것과 실제로 혼자인 것은 다른 문제더군요.\n\n다음 실험에서 만나요",
+tags:["#인생2막","#중년","#혼자살기","#실험기록"],
+pin:"여러분은 어떠신가요? 댓글로 남겨주세요.",
+th:"혼자인 줄 알았다.\n\n찾아보니 ○○만 명이었다.\n\n혼자라고 느끼는 것과 혼자인 것은 다른 문제였다."},
+
+{n:16,s:3,t:"처음 만난 사람들과 여행해봤다",
+hook:"처음 만난 사람들과\n여행해봤다",
+sc:[["0–3초","여러 개의 캐리어 (사람 얼굴 없이)","이름만 아는 사람들과 떠났다"],
+["3–9초","함께 걷는 발걸음들","첫날은 ○○시간 동안 어색했다"],
+["9–15초","함께 놓인 커피잔들","○○일째, 말이 편해졌다"],
+["15–22초","각자 흩어지는 뒷모습, 로고","어색했던 시간 ○○시간 · 다음 실험에서 만나요"]],
+cap:"실험 16. 낯선 사람들과의 여행\n\n어색했던 건 딱 ○○시간이었습니다.\n\n비슷한 시기를 지나는 사람들끼리는 설명이 필요 없더군요.\n\n다음 실험에서 만나요",
+tags:["#동행여행","#인생2막","#중년","#실험기록"],
+pin:"낯선 사람과 여행, 해보신 적 있으신가요?",
+th:"처음 만난 사람들과 여행해봤다.\n\n어색했던 건 ○○시간.\n\n비슷한 시기를 지나는 사람끼리는 설명이 필요 없었다."},
+
+{n:17,s:3,t:"다시 시작한 사람들에게 물어봤다",
+hook:"다시 시작한 사람들에게\n물어봤다",
+sc:[["0–3초","노트와 펜, 여러 개의 답변","같은 질문을 ○○명에게 했다"],
+["3–9초","적힌 답변들 (필체 흐리게)","무엇이 가장 두려웠나요"],
+["9–15초","가장 많이 나온 답 표시","○○명이 같은 답을 했다"],
+["15–22초","창밖 아침, 로고","두려움은 비슷했다 · 다음 실험에서 만나요"]],
+cap:"실험 17. 같은 질문\n\n다시 시작한 ○○명에게 같은 질문을 했습니다.\n가장 많이 나온 답은 ○○이었어요.\n\n두려움의 모양은 다들 비슷했습니다.\n\n다음 실험에서 만나요",
+tags:["#인생2막","#다시시작","#중년","#실험기록"],
+pin:"여러분이 가장 두려운 건 무엇인가요?",
+th:"다시 시작한 ○○명에게 같은 질문을 했다.\n\n가장 많은 답은 ○○.\n\n두려움의 모양은 다들 비슷했다."},
+
+{n:18,s:3,t:"후회하는 것과 후회 안 하는 것",
+hook:"후회하는 것과\n안 하는 것",
+sc:[["0–3초","두 장으로 나뉜 노트","목록을 두 개 만들었다"],
+["3–9초","왼쪽 목록에 적는 손","후회하는 것 ○○개"],
+["9–15초","오른쪽 목록에 적는 손","후회 안 하는 것 ○○개"],
+["15–22초","한 줄에 밑줄, 로고","후회는 전부 안 한 일이었다 · 다음 실험에서 만나요"]],
+cap:"실험 18. 두 개의 목록\n\n후회하는 것 ○○개, 후회하지 않는 것 ○○개를 적어봤습니다.\n\n후회하는 항목은 전부 '한 일'이 아니라 '안 한 일'이었어요.\n\n다음 실험에서 만나요",
+tags:["#인생2막","#중년","#후회","#실험기록"],
+pin:"가장 후회되는 '안 한 일'은 무엇인가요?",
+th:"후회하는 것과 안 하는 것을 나눠 적어봤다.\n\n후회는 전부 '안 한 일'이었다."},
+
+{n:19,s:3,t:"1년 전 나에게 하고 싶은 말",
+hook:"1년 전 나에게\n하고 싶은 말",
+sc:[["0–3초","1년 전 날짜가 적힌 달력","정확히 1년 전이었다"],
+["3–9초","편지를 쓰는 손 (글씨 흐리게)","그때는 ○○이 제일 무서웠다"],
+["9–15초","봉투에 넣는 손","지금 돌아보면"],
+["15–22초","창밖 아침 햇살, 로고","1년이면 충분했다 · 다음 실험에서 만나요"]],
+cap:"실험 19. 1년 전 나에게\n\n1년 전에는 ○○이 가장 무서웠습니다.\n지금 돌아보면 그 두려움은 ○○개월이면 지나가는 것이었어요.\n\n지금 그 자리에 계신 분이 있다면, 1년이면 충분합니다.\n\n다음 실험에서 만나요",
+tags:["#인생2막","#다시시작","#중년","#실험기록"],
+pin:"1년 전 자신에게 한마디 남겨주세요.",
+th:"1년 전에는 ○○이 제일 무서웠다.\n\n지금 보니 ○○개월이면 지나갈 일이었다.\n\n1년이면 충분하다."},
+
+{n:20,s:3,t:"같이 실험할 사람을 찾습니다",
+hook:"같이 실험할 사람을\n찾습니다",
+sc:[["0–3초","스무 개의 노트 페이지 넘김","스무 번의 실험을 마쳤다"],
+["3–9초","지금까지의 실험 번호들","혼자 하는 실험은 여기까지"],
+["9–15초","빈 노트 페이지","다음은 같이 해보려 합니다"],
+["15–22초","창밖 아침, 로고","실험 21부터 · 다음 실험에서 만나요"]],
+cap:"실험 20. 스무 번째 기록\n\n혼자 스무 번의 실험을 했습니다.\n다음부터는 같이 해보려 합니다.\n\n비슷한 시기를 지나고 계신 분이라면, 댓글에 '실험'이라고 남겨주세요.\n\n다음 실험에서 만나요",
+tags:["#인생2막","#다시시작","#중년","#실험기록"],
+pin:"댓글에 '실험'이라고 남겨주시면 안내 드릴게요.",
+th:"혼자 스무 번의 실험을 했다.\n\n다음부터는 같이 해보려 한다.\n\n실험 21에서 만나요."}
+];
+
+var stage = "all", kw = "";
+
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function fill(s){return esc(s).replace(/○○/g,'<span class="fill">○○</span>');}
+
+var toast = document.getElementById("toast");
+function copy(txt){
+  function ok(){ toast.classList.add("on"); setTimeout(function(){toast.classList.remove("on");},1300); }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(ok).catch(function(){fb(txt);ok();});
+  } else { fb(txt); ok(); }
+}
+function fb(t){
+  var a=document.createElement("textarea");
+  a.value=t;a.style.position="fixed";a.style.opacity="0";
+  document.body.appendChild(a);a.select();
+  try{document.execCommand("copy");}catch(e){}
+  document.body.removeChild(a);
+}
+window.doCopy=function(i,k){
+  var d=DATA[i], t="";
+  if(k==="hook") t=d.hook;
+  else if(k==="sc") t=d.sc.map(function(s){return "["+s[0]+"] "+s[1]+"\n자막: "+s[2];}).join("\n\n");
+  else if(k==="cap") t=d.cap+"\n\n"+d.tags.join(" ");
+  else if(k==="pin") t=d.pin;
+  else if(k==="th") t=d.th;
+  else if(k==="all") t="실험 "+d.n+". "+d.t+"\n\n[썸네일]\n"+d.hook
+    +"\n\n[릴스]\n"+d.sc.map(function(s){return "["+s[0]+"] "+s[1]+"\n자막: "+s[2];}).join("\n\n")
+    +"\n\n[캡션]\n"+d.cap+"\n\n"+d.tags.join(" ")+"\n\n[고정댓글]\n"+d.pin+"\n\n[쓰레드]\n"+d.th;
+  copy(t);
+};
+
+function sec(title,i,key,inner){
+  return '<div class="sec"><div class="sec-head"><span class="sec-t">'+title+'</span>'
+    +'<button class="cp" onclick="event.stopPropagation();doCopy('+i+',\''+key+'\')">복사</button></div>'
+    +inner+'</div>';
+}
+
+function render(){
+  var q = kw.trim().toLowerCase();
+  var html = "";
+  DATA.forEach(function(d,i){
+    if(stage!=="all" && String(d.s)!==stage) return;
+    if(q){
+      var blob=(d.t+d.hook+d.cap+d.th+d.tags.join(" ")).toLowerCase();
+      if(blob.indexOf(q)===-1) return;
+    }
+    html += '<div class="exp" id="e'+i+'">'
+      + '<div class="exp-head" onclick="document.getElementById(\'e'+i+'\').classList.toggle(\'open\')">'
+      + '<span class="no">'+String(d.n).padStart(2,"0")+'</span>'
+      + '<span class="exp-t">'+esc(d.t)+'</span><span class="arrow">›</span></div>'
+      + '<div class="exp-body">'
+      + sec("썸네일",i,"hook",'<div class="box hook">'+fill(d.hook)+'</div>')
+      + sec("릴스 대본",i,"sc", d.sc.map(function(s){
+          return '<div class="scene"><div class="m">'+esc(s[0])+'</div><div class="v">'+esc(s[1])
+            +'</div><div class="s">'+fill(s[2])+'</div></div>';
+        }).join(""))
+      + sec("캡션",i,"cap",'<div class="box">'+fill(d.cap)+'</div><div style="margin-top:10px;">'
+          + d.tags.map(function(t){return '<span class="tag">'+esc(t)+'</span>';}).join("")+'</div>')
+      + sec("고정댓글",i,"pin",'<div class="box">'+fill(d.pin)+'</div>')
+      + sec("쓰레드",i,"th",'<div class="box">'+fill(d.th)+'</div>')
+      + '<div class="sec"><button class="cp" style="width:100%;min-height:44px;"'
+      + ' onclick="event.stopPropagation();doCopy('+i+',\'all\')">전체 한 번에 복사</button></div>'
+      + '</div></div>';
+  });
+  document.getElementById("list").innerHTML = html ||
+    '<div class="empty">검색 결과가 없어요. 다른 키워드로 찾아보세요.</div>';
+}
+
+document.getElementById("q").addEventListener("input", function(){ kw=this.value; render(); });
+Array.prototype.forEach.call(document.querySelectorAll(".chip"), function(c){
+  c.addEventListener("click", function(){
+    Array.prototype.forEach.call(document.querySelectorAll(".chip"),function(x){x.classList.remove("on");});
+    this.classList.add("on"); stage=this.getAttribute("data-s"); render();
+  });
+});
+render();
+</script>
+</body>
+</html>
